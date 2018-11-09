@@ -9,7 +9,7 @@ const server = http.createServer(app);
 
 server.listen(port);
 
-const normalizePort = (val) => 
+function normalizePort(val)
 {
   const port = parseInt(val, 10);
   if (isNaN(port))
@@ -21,7 +21,7 @@ const normalizePort = (val) =>
     return port;
   }
   return false;
-};
+}
 
 server.on('listening', () =>
 {
