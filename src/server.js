@@ -2,12 +2,28 @@ const http = require('http');
 
 const app = require('./app');
 
-const PORT = 3000;
+const port = normalizePort(process.env.port || '3000');
+app.set('port', port);
+
 const server = http.createServer(app);
 
-server.listen(PORT);
+server.listen(port);
+
+const normalizePort = (val) => 
+{
+  const port = parseInt(val, 10);
+  if (isNaN(port))
+  {
+    return val;
+  }
+  if (port >= 0)
+  {
+    return port;
+  }
+  return false;
+};
 
 server.on('listening', () =>
 {
-  console.log(`server is listening for requests on port ${PORT}`);
+  console.log(`server is listening for requests on port ${server.address().port}`);
 });
