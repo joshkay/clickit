@@ -18,10 +18,12 @@
   },
   "homepage": "https://github.com/joshkay/bloccit#readme",
   "devDependencies": {
+    "faker": "^4.1.0",
     "jasmine": "^3.3.0",
     "request": "^2.88.0"
   },
   "dependencies": {
+    "body-parser": "^1.18.3",
     "dotenv": "^5.0.1",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
