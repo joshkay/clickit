@@ -34,7 +34,7 @@ describe('routes : topics', () =>
 
   describe('GET /topics', () =>
   {
-    it ('should return a status code 200 and all topics', (done) =>
+    it('should return a status code 200 and all topics', (done) =>
     {
       request.get(base, (err, res, body) =>
       {
@@ -49,7 +49,7 @@ describe('routes : topics', () =>
 
   describe('GET /topics/new', () =>
   {
-    it ('should render a new topic form', (done) =>
+    it('should render a new topic form', (done) =>
     {
       request.get(`${base}new`, (err, res, body) =>
       {
@@ -72,7 +72,7 @@ describe('routes : topics', () =>
       }
     };
 
-    it ('should create a new topic and redirect', (done) =>
+    it('should create a new topic and redirect', (done) =>
     {
       request.post(options, (err, res, body) =>
       {
@@ -99,7 +99,7 @@ describe('routes : topics', () =>
 
   describe('GET /topics/:id', () =>
   {
-    it ('should render a view with the selected topic', (done) =>
+    it('should render a view with the selected topic', (done) =>
     {
       request.get(`${base}${this.topic.id}`, (err, res, body) =>
       {
@@ -112,7 +112,7 @@ describe('routes : topics', () =>
 
   describe('POST /topics/:id/destroy', () =>
   {
-    it ('should delete the topic with the associated ID', (done) =>
+    it('should delete the topic with the associated ID', (done) =>
     {
       Topic.findAll()
       .then((topics) =>
@@ -136,7 +136,7 @@ describe('routes : topics', () =>
 
   describe('GET /topics/:id/edit', () =>
   {
-    it ('should render a view with an edit topic form', (done) =>
+    it('should render a view with an edit topic form', (done) =>
     {
       request.get(`${base}${this.topic.id}/edit`, (err, res, body) =>
       {
@@ -150,7 +150,7 @@ describe('routes : topics', () =>
 
   describe('POST /topics/:id/update', () =>
   {
-    it ('should update the topic with the given values', (done) =>
+    it('should update the topic with the given values', (done) =>
     {
       const options =
       {
