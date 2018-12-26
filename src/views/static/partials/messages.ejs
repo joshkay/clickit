@@ -1,0 +1,15 @@
+<% if (messages.errors) { %>
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+
+    Validation errors:
+    
+    <ul>
+      <% messages.errors.forEach((err) => { %>
+        <li>
+          <%= `${err.param} ${err.msg}` %>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+<% } %>

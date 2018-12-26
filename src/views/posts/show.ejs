@@ -7,6 +7,9 @@
     <% include ../static/partials/navbar.ejs %>
 
     <main class="container">
+
+      <% include ../static/partials/messages.ejs %>
+      
       <h1><%= post.title %></h1>
       
       <a href="/topics/<%= post.topicId %>/posts/<%= post.id %>/edit" class="btn btn-warning">Edit</a>
