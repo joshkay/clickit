@@ -1,6 +1,7 @@
 const sequelize = require('../../src/db/models/index').sequelize;
 const Topic = require('../../src/db/models').Topic;
 const Post = require('../../src/db/models').Post;
+const Flair = require('../../src/db/models').Flair;
 
 describe('Post', () =>
 {
@@ -8,6 +9,7 @@ describe('Post', () =>
   {
     this.topic;
     this.post;
+    this.flair;
 
     sequelize.sync({force: true}).then((res) =>
     {
@@ -27,14 +29,28 @@ describe('Post', () =>
         .then((post) =>
         {
           this.post = post;
-          done();
+
+          Flair.create({
+            name: 'Experience',
+            color: 'Yellow'
+          })
+          .then((flair) =>
+          {
+            this.flair = flair;
+
+            this.post.addFlair(this.flair)
+            .then((postFlair) =>
+            {
+              done();
+            });
+          });
         });
       })
       .catch((err) =>
       {
         console.log(err);
         done();
-      })
+      });
     });
   });
 
@@ -108,6 +124,93 @@ describe('Post', () =>
       .then((associatedTopic) => 
       {
         expect(associatedTopic.title).toBe('Expeditions to Alpha Centauri');
+        done();
+      });
+    });
+  });
+
+  describe('#addFlair()', () =>
+  {
+    it('should associate a flair with a post', (done) =>
+    {
+      Flair.create({
+        name: 'Verified',
+        color: 'Green'
+      })
+      .then((flair) =>
+      {
+        this.post.addFlair(flair)
+        .then((postFlair) =>
+        {
+          this.post.getFlairs()
+          .then((flairs) =>
+          {
+            expect(flairs.length).toBe(2);
+            expect(flairs[0].id).toBe(this.flair.id);
+            expect(flairs[0].name).toBe('Experience');
+            expect(flairs[1].id).toBe(flair.id);
+            done();
+          });
+        });
+      })
+      .catch((err) =>
+      {
+        console.log(err);
+        done();
+      });
+    });
+  });
+
+  describe('#getFlairs()', () =>
+  {
+    it('should get all flairs associated with the post', (done) =>
+    {
+      this.post.getFlairs()
+      .then((flairs) =>
+      {
+        expect(flairs.length).toBe(1);
+        expect(flairs[0].id).toBe(this.flair.id);
+        expect(flairs[0].name).toBe('Experience');
+        done();
+      })
+      .catch((err) =>
+      {
+        console.log(err);
+        done();
+      });
+    });
+  });
+
+  describe('#delete()', () =>
+  {
+    it('should delete the post', (done) =>
+    {
+      Post.findAll()
+      .then((posts) =>
+      {
+        const postCountBeforeDelete = posts.length;
+
+        this.post.getFlairs()
+        .then((flairs) =>
+        {
+          expect(flairs.length).toBe(1);
+          const flairId = flairs[0].id;
+
+          this.post.destroy()
+          .then(() =>
+          {
+            Post.findAll()
+            .then((posts) =>
+            {
+              expect(posts.length).toBe(postCountBeforeDelete - 1);
+              done();
+            });
+          });
+        });
+      })
+      .catch((err) =>
+      {
+        console.log(err);
         done();
       });
     });

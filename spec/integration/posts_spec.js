@@ -178,6 +178,6 @@ describe('routes : post', () =>
           done();
         });
       });
-    })
+    });
   });
 });
