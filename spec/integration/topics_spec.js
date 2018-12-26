@@ -62,18 +62,18 @@ describe('routes : topics', () =>
 
   describe('POST /topics/create', () =>
   {
-    const options =
-    {
-      url: `${base}create`,
-      form:
-      {
-        title: 'blink-182 songs',
-        description: "What's your favourite blink-182 song?"
-      }
-    };
-
     it('should create a new topic and redirect', (done) =>
     {
+      const options =
+      {
+        url: `${base}create`,
+        form:
+        {
+          title: 'blink-182 songs',
+          description: "What's your favourite blink-182 song?"
+        }
+      };
+
       request.post(options, (err, res, body) =>
       {
         // get id from body response
@@ -92,6 +92,69 @@ describe('routes : topics', () =>
         {
           console.log(err);
           done();
+        });
+      });
+    });
+
+    describe('should not create a new topic that fails validations', () =>
+    {
+      it('should not create a new topic that has an invalid title', (done) =>
+      {
+        const options =
+        {
+          url: `${base}create`,
+          form:
+          {
+            title: 'a',
+            description: 'Long enough description'
+          }
+        };
+
+        request.post(options, (err, res, body) =>
+        {
+          Topic.findOne({
+            where: {description: 'Long enough description'}
+          })
+          .then((topic) =>
+          {
+            expect(topic).toBeNull();
+            done();
+          })
+          .catch((err) =>
+          {
+            console.log(err);
+            done();
+          });
+        });
+      });
+
+      it('should not create a new topic that has an invalid description', (done) =>
+      {
+        const options =
+        {
+          url: `${base}create`,
+          form:
+          {
+            title: 'Long enough title',
+            description: 'b'
+          }
+        };
+
+        request.post(options, (err, res, body) =>
+        {
+          Topic.findOne({
+            where: {title: 'Long enough title'}
+          })
+          .then((topic) =>
+          {
+            expect(topic).toBeNull();
+            done();
+          })
+          .catch((err) =>
+          {
+            console.log(err);
+            done();
+          });
         });
       });
     });
@@ -173,6 +236,69 @@ describe('routes : topics', () =>
         {
           expect(topic.title).toBe('JavaScript Frameworks');
           done();
+        });
+      });
+    });
+
+    describe('should not update an existing topic that fails validations', () =>
+    {
+      it('should not update an existing topic that has an invalid title', (done) =>
+      {
+        const options =
+        {
+          url: `${base}${this.topic.id}/update`,
+          form:
+          {
+            title: 'a',
+            description: 'Long enough description'
+          }
+        };
+
+        request.post(options, (err, res, body) =>
+        {
+          Topic.findOne({
+            where: {id: this.topic.id}
+          })
+          .then((topic) =>
+          {
+            expect(topic.title).not.toBe('a');
+            done();
+          })
+          .catch((err) =>
+          {
+            console.log(err);
+            done();
+          });
+        });
+      });
+
+      it('should not create a new topic that has an invalid description', (done) =>
+      {
+        const options =
+        {
+          url: `${base}${this.topic.id}/update`,
+          form:
+          {
+            title: 'Long enough title',
+            description: 'b'
+          }
+        };
+
+        request.post(options, (err, res, body) =>
+        {
+          Topic.findOne({
+            where: {id: this.topic.id}
+          })
+          .then((topic) =>
+          {
+            expect(topic.description).not.toBe('b');
+            done();
+          })
+          .catch((err) =>
+          {
+            console.log(err);
+            done();
+          });
         });
       });
     });
