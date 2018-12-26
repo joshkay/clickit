@@ -23,6 +23,7 @@
     "request": "^2.88.0"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "dotenv": "^5.0.1",
     "ejs": "^2.6.1",
@@ -31,6 +32,8 @@
     "express-session": "^1.15.6",
     "express-validator": "^5.3.1",
     "npm": "^6.5.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
     "pg": "^7.7.1",
     "pg-hstore": "^2.3.2",
     "sequelize": "^4.41.2",
