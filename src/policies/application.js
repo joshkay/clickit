@@ -8,7 +8,12 @@ module.exports = class ApplicationPolicy
 
   _isOwner()
   {
-    return this.record && (this.record.userId = this.user.id);
+    return this.record && (this.record.userId == this.user.id);
+  }
+
+  _isMember()
+  {
+    return this.user && this.user.role === 'member';
   }
 
   _isAdmin()

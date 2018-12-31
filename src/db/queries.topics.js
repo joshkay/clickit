@@ -63,7 +63,7 @@ module.exports =
         .then((res) =>
         {
           callback(null, topic);
-        })
+        });
       }
       else
       {

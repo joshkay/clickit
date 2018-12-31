@@ -211,15 +211,25 @@ describe('routes : topics', () =>
   {
     beforeEach((done) =>
     {
-      request.get({
-        url: 'http://localhost:3000/auth/fake',
-        form: 
-        {
-          role: 'membera'
-        }
-      }, (err, res, body) =>
+      User.create({
+        email: 'member@example.com',
+        password: '123456',
+        role: 'member'
+      })
+      .then((user) =>
       {
-        done();
+        request.get({
+          url: 'http://localhost:3000/auth/fake',
+          form: 
+          {
+            role: user.role,
+            userId: user.id,
+            email: user.email
+          }
+        }, (err, res, body) =>
+        {
+          done();
+        });
       });
     });
 
