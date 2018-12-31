@@ -3,7 +3,7 @@ const Topic = require('../../src/db/models').Topic;
 const Post = require('../../src/db/models').Post;
 const User = require('../../src/db/models').User;
 
-describe('Post', () =>
+describe('Topic', () =>
 {
   beforeEach((done) =>
   {
@@ -47,11 +47,11 @@ describe('Post', () =>
       {
         console.log(err);
         done();
-      })
+      });
     });
   });
 
-  describe('#create()', () =>
+  describe('#create()', () => 
   {
     it('should create a topic object with a title and description', (done) =>
     {
@@ -84,6 +84,102 @@ describe('Post', () =>
       .catch((err) =>
       {
         expect(err.message).toContain('Topic.description cannot be null');
+        done();
+      });
+    });
+
+    it('should not create a topic with missing title', (done) =>
+    {
+      Topic.create({
+        description: "Why isn't this a thing yet?"
+      })
+      .then((topic) =>
+      {
+        done();
+      })
+      .catch((err) =>
+      {
+        expect(err.message).toContain('Topic.title cannot be null');
+        done();
+      });
+    });
+  });
+
+  describe('#getPosts()', () =>
+  {
+    it('should return nothing when a topic has no posts', (done) =>
+    {
+      Topic.create({
+        title: 'Space Things',
+        description: 'Stuff about space.'
+      })
+      .then((topic) =>
+      {
+        topic.getPosts()
+        .then((posts) =>
+        {
+          expect(posts.length).toBe(0);
+          done();
+        });
+      })
+      .catch((err) =>
+      {
+        console.log(err);
+        done();
+      });
+    });
+
+    it('should return all posts associated with a topic', (done) =>
+    {
+      this.topic.getPosts()
+      .then((posts) =>
+      {
+        expect(posts.length).toBe(1);
+        expect(posts[0].title).toBe('My first visit to Proxima Centauri b');
+        expect(posts[0].body).toBe('I saw some rocks.');
+        expect(posts[0].userId).toBe(this.user.id);
+        done();
+      })
+      .catch((err) =>
+      {
+        console.log(err);
+        done();
+      });
+    });
+
+    it('should return existing posts and newly added post associated with a topic', (done) =>
+    {
+      Post.create({
+        title: 'My second visit to Proxima Centauri b',
+        body: 'I saw some more rocks.',
+        userId: this.user.id,
+        topicId: this.topic.id
+      })
+      .then((post) =>
+      {
+        expect(post.topicId).toBe(this.topic.id);
+
+        this.topic.addPost(post)
+        .then((topic) =>
+        {
+          topic.getPosts()
+          .then((posts) =>
+          {
+            expect(posts.length).toBe(2);  
+            expect(posts[0].title).toBe('My first visit to Proxima Centauri b');
+            expect(posts[0].body).toBe('I saw some rocks.');
+            expect(posts[0].userId).toBe(this.user.id);
+            expect(posts[1].title).toBe('My second visit to Proxima Centauri b');
+            expect(posts[1].body).toBe('I saw some more rocks.');
+            expect(posts[1].userId).toBe(this.user.id);
+
+            done();
+          });
+        });
+      })
+      .catch((err) =>
+      {
+        console.log(err);
         done();
       });
     });
