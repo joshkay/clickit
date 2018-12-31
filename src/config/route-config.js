@@ -7,6 +7,7 @@ module.exports =
     const postRoutes = require('../routes/posts');
     const userRoutes = require('../routes/users');
     const advertisementRoutes = require('../routes/advertisements');
+    const flairRoutes = require('../routes/flairs');
     
     if (process.env.NODE_ENV === 'test')
     {
@@ -19,5 +20,6 @@ module.exports =
     app.use(postRoutes);
     app.use(userRoutes);
     app.use(advertisementRoutes);
+    app.use(flairRoutes);
   }
 }

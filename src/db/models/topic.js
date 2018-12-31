@@ -26,6 +26,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'topicId',
       as: 'rules'
     });
+
+    Topic.belongsToMany(models.Flair, {
+      foreignKey: 'topicId',
+      as: 'flairs',
+      through: 'TopicFlair'
+    });
   };
   return Topic;
 };

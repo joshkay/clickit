@@ -12,7 +12,14 @@
       <ul class="list-group">
         <% topics.forEach((topic) => { %>
           <li class="list-group-item">
-            <a href="/topics/<%= topic.id %>"> <%= topic.title %> </a>
+            <a href="/topics/<%= topic.id %>"><%= topic.title %></a>
+
+            <% topic.flairs.forEach((flair) => { %>
+              <a href="/flairs/<%= flair.id %>" class="badge badge-dark"
+                style="background-color: <%= flair.color %>;">
+                <%= flair.name %>
+              </a>
+            <% }) %>
           </li>
         <% }) %>
       </ul>

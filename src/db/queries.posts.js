@@ -2,6 +2,7 @@ const Authorizer = require('../policies/post');
 
 const Post = require('./models').Post;
 const Topic = require('./models').Topic;
+const Flair = require('./models').Flair;
 
 module.exports =
 {
@@ -19,7 +20,12 @@ module.exports =
   },
   getPost(id, callback)
   {
-    return Post.findByPk(id)
+    return Post.findByPk(id, {
+      include: [{
+        model: Flair,
+        as: 'flairs'
+      }]
+    })
     .then((post) =>
     {
       callback(null, post);

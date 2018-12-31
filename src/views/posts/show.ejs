@@ -11,16 +11,25 @@
       <% include ../static/partials/messages.ejs %>
       
       <h1><%= post.title %></h1>
+      <p><%= post.body %></p>
+
+      <% post.flairs.forEach((flair) => { %>
+        <a href="/flairs/<%= flair.id %>" class="badge badge-dark"
+          style="background-color: <%= flair.color %>;">
+          <%= flair.name %>
+        </a>
+      <% }) %>
+
+      <hr>
       
       <% if (currentUser && (currentUser.isAdmin() || currentUser.isOwner(post))) { %>
         <a href="/topics/<%= post.topicId %>/posts/<%= post.id %>/edit" class="btn btn-warning">Edit</a>
+      <a href="/topics/<%= post.topicId %>/posts/<%= post.id %>/flairs/new" class="btn btn-success">New Flair</a>
         
         <form style="display:initial" action="/topics/<%= post.topicId %>/posts/<%= post.id %>/destroy" method="post">
           <button type="submit" class="btn btn-danger">Delete</button>
         </form>
       <% } %>
-
-      <p><%= post.body %></p>
     </main>
 
     <% include ../static/partials/baseScripts.ejs %>
