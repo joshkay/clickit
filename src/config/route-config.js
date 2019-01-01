@@ -8,6 +8,7 @@ module.exports =
     const userRoutes = require('../routes/users');
     const advertisementRoutes = require('../routes/advertisements');
     const flairRoutes = require('../routes/flairs');
+    const commentRoutes = require('../routes/comments');
     
     if (process.env.NODE_ENV === 'test')
     {
@@ -21,5 +22,6 @@ module.exports =
     app.use(userRoutes);
     app.use(advertisementRoutes);
     app.use(flairRoutes);
+    app.use(commentRoutes);
   }
 }
