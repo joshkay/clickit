@@ -211,7 +211,115 @@ describe('routes : comments', () =>
 
     describe('POST /topics/:topicId/posts/:postId/comments/:id/destroy', () =>
     {
-      it('should delete the comment with the associated ID', (done) =>
+      it("should delete the user's comment with the associated ID", (done) =>
+      {
+        Comment.findAll()
+        .then((comments) =>
+        {
+          const commentCountBeforeDelete = comments.length;
+
+          expect(commentCountBeforeDelete).toBe(1);
+
+          request.post(`${base}/${this.topic.id}/posts/${this.post.id}/comments/${this.comment.id}/destroy`, (err, res, body) =>
+          {
+            expect(err).toBeNull();
+            expect(res.statusCode).toBe(302);
+
+            Comment.findAll()
+            .then((comments) =>
+            {
+              expect(comments.length).toBe(commentCountBeforeDelete - 1);
+              done();
+            });
+          });
+        })
+        .catch((err) =>
+        {
+          console.log(err);
+          done();
+        });
+      });
+
+      it("should not delete another user's comment", (done) =>
+      {
+        User.create({
+          email: 'test@user.com',
+          password: '123456'
+        })
+        .then((user) =>
+        {
+          Comment.create(
+          {
+            body: 'i cannot do this',
+            userId: user.id,
+            postId: this.post.id
+          })
+          .then((otherComment) =>
+          {
+            Comment.findAll()
+            .then((comments) =>
+            {
+              const commentCountBeforeDelete = comments.length;
+    
+              expect(commentCountBeforeDelete).toBe(2);
+    
+              request.post(`${base}/${this.topic.id}/posts/${this.post.id}/comments/${otherComment.id}/destroy`, (err, res, body) =>
+              {
+                expect(err).toBeNull();
+                expect(res.statusCode).toBe(401);
+
+                Comment.findAll()
+                .then((comments) =>
+                {
+                  expect(comments.length).toBe(commentCountBeforeDelete);
+                  done();
+                });
+              });
+            });
+          });
+        })
+        .catch((err) =>
+        {
+          console.log(err);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('admin user performing CRUD actions for Post', () =>
+  {
+    beforeEach((done) =>
+    {
+      this.adminUser;
+
+      User.create({
+        email: 'admin@example.com',
+        password: '123456',
+        role: 'admin'
+      })
+      .then((user) =>
+      {
+        this.adminUser = user;
+
+        request.get({
+          url: 'http://localhost:3000/auth/fake',
+          form:
+          {
+            role: user.role,
+            userId: user.id,
+            email: user.email
+          }
+        }, (err, res, body) =>
+        {
+          done();
+        });
+      });
+    });
+
+    describe('POST /topics/:topicId/posts/:postId/comments/:id/destroy', () =>
+    {
+      it("should delete a member's comment with the associated ID", (done) =>
       {
         Comment.findAll()
         .then((comments) =>
