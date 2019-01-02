@@ -73,7 +73,7 @@ module.exports =
 
     if (errors)
     {
-      req.flash('error', errors);
+      req.flash('errors', errors);
       return res.redirect(req.headers.referer);
     }
     else

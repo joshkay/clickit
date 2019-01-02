@@ -5,6 +5,7 @@ const Topic = require('./models').Topic;
 const Flair = require('./models').Flair;
 const User = require('./models').User;
 const Comment = require('./models').Comment;
+const Vote = require('./models').Vote;
 
 module.exports =
 {
@@ -36,6 +37,10 @@ module.exports =
           [{
             model: User
           }]
+        },
+        {
+          model: Vote,
+          as: 'votes'
         }
       ]
     })
