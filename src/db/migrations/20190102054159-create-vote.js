@@ -43,6 +43,13 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
+    })
+    .then(() =>
+    {
+      queryInterface.addConstraint('Votes', ['postId', 'userId'], {
+        type: 'unique',
+        name: 'post_user'
+      });
     });
   },
   down: (queryInterface, Sequelize) => {

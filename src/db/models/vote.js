@@ -10,11 +10,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     postId: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      unique: 'post_user'
     },
     userId: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      unique: 'post_user'
     }
   }, {});
   Vote.associate = function(models) {

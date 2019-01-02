@@ -127,6 +127,61 @@ describe('Vote', () =>
         done();
       });
     });
+
+    it('should create not create a vote with a value other than 1 or -1', (done) =>
+    {
+      Vote.create({
+        value: 2,
+        postId: this.post.id,
+        userId: this.user.id
+      })
+      .then((vote) =>
+      {
+        done();
+      })
+      .catch((err) =>
+      {
+        expect(err.message).toContain('Validation isIn on value failed');
+        done();
+      });
+    });
+
+    it('should not create two votes for the same user on a single post', (done) =>
+    {
+      Vote.create({
+        value: 1,
+        postId: this.post.id,
+        userId: this.user.id
+      })
+      .then((vote) =>
+      {
+        Vote.create({
+          value: -1,
+          postId: this.post.id,
+          userId: this.user.id
+        })
+        .then((vote) =>
+        {
+          done();
+        })
+        .catch((err) =>
+        {
+          const errorMessages = err.errors.map((error) =>
+          {
+            return error.message;
+          });
+          
+          expect(errorMessages).toContain('postId must be unique');
+          expect(errorMessages).toContain('userId must be unique');
+          done();
+        });
+      })
+      .catch((err) =>
+      {
+        console.log(err);
+        done();
+      });
+    });
   });
 
   describe('#setUser()', () =>
