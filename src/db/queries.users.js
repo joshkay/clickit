@@ -9,13 +9,25 @@ module.exports =
     const salt = bcrypt.genSaltSync();
     const hashedPassword = bcrypt.hashSync(newUser.password, salt);
 
-    return User.create({
-      email: newUser.email,
-      password: hashedPassword
-    })
-    .then((user) =>
+    // if this is the first ever user make them an admin
+    return User.findAll()
+    .then((users) =>
     {
-      callback(null, user);
+      const role = users.length === 0 ? 'admin' : 'member';
+
+      User.create({
+        email: newUser.email,
+        password: hashedPassword,
+        role: role
+      })
+      .then((user) =>
+      {
+        callback(null, user);
+      })
+      .catch((err) =>
+      {
+        callback(err);
+      });
     })
     .catch((err) =>
     {
