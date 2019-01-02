@@ -9,7 +9,8 @@ module.exports =
     const advertisementRoutes = require('../routes/advertisements');
     const flairRoutes = require('../routes/flairs');
     const commentRoutes = require('../routes/comments');
-    
+    const voteRoutes = require('../routes/votes');
+
     if (process.env.NODE_ENV === 'test')
     {
       const mockAuth = require('../../spec/support/mock-auth');
@@ -23,5 +24,6 @@ module.exports =
     app.use(advertisementRoutes);
     app.use(flairRoutes);
     app.use(commentRoutes);
+    app.use(voteRoutes);
   }
 }

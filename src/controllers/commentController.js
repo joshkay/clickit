@@ -20,7 +20,7 @@ module.exports =
       {
         if (err)
         {
-          req.flash('error', err);
+          req.flash('errors', err);
         }
         res.redirect(req.headers.referer);
       });
