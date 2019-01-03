@@ -17,6 +17,10 @@
 
         <h1><%= post.title %></h1>
       </div>
+
+      <% if (currentUser) { %>
+        <% include ../favorites/favoriting.ejs %>
+      <% } %>
         
       <p><%= post.body %></p>
 

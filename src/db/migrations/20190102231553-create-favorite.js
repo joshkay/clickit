@@ -1,24 +1,17 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Votes', {
+    return queryInterface.createTable('Favorites', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      value: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        validate: {
-          isIn: [[-1, 1]]
-        }
-      },
       postId: {
         type: Sequelize.INTEGER,
-        onDelete: 'CASCADE',
         allowNull: false,
+        onDelete: 'CASCADE',
         references: {
           model: 'Posts',
           key: 'id',
@@ -27,8 +20,8 @@ module.exports = {
       },
       userId: {
         type: Sequelize.INTEGER,
-        onDelete: 'CASCADE',
         allowNull: false,
+        onDelete: 'CASCADE',
         references: {
           model: 'Users',
           key: 'id',
@@ -46,13 +39,13 @@ module.exports = {
     })
     .then(() =>
     {
-      queryInterface.addConstraint('Votes', ['postId', 'userId'], {
+      queryInterface.addConstraint('Favorites', ['postId', 'userId'], {
         type: 'unique',
-        name: 'votes_post_user'
+        name: 'favorites_post_user'
       });
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Votes');
+    return queryInterface.dropTable('Favorites');
   }
 };
