@@ -12,6 +12,7 @@ describe('Post', () =>
     this.topic;
     this.post;
     this.user;
+    this.otherUser;
     this.flair;
 
     sequelize.sync({force: true}).then((res) =>
@@ -55,7 +56,15 @@ describe('Post', () =>
             this.post.addFlair(this.flair)
             .then((postFlair) =>
             {
-              done();
+              User.create({
+                email: 'other@user.com',
+                password: 'password'
+              })
+              .then((user) =>
+              {
+                this.otherUser = user;
+                done();
+              });
             });
           });
         });
@@ -106,6 +115,31 @@ describe('Post', () =>
       {
         expect(err.message).toContain('Post.body cannot be null');
         expect(err.message).toContain('Post.topicId cannot be null');
+        done();
+      });
+    });
+
+    it('should create a post with an upvote belonging to the user', (done) =>
+    {
+      Post.create({
+        title: 'Pros of Cryosleep during the long journey',
+        body: "1. Not having to answer the 'are we there yet?' question.",
+        topicId: this.topic.id,
+        userId: this.user.id
+      })
+      .then((post) =>
+      {
+        post.getVotes()
+        .then((votes) =>
+        {
+          expect(votes.length).toBe(1);
+          expect(votes[0].userId).toBe(this.user.id);
+          done();
+        });        
+      })
+      .catch((err) =>
+      {
+        console.log(err);
         done();
       });
     });
@@ -285,7 +319,7 @@ describe('Post', () =>
     {
       // create a bunch of users for multiple votes
       this.users = [];
-      this.users.push(this.user);
+      this.users.push(this.otherUser);
 
       User.create({
         email: 'dumbie1@vote.com',
@@ -361,7 +395,7 @@ describe('Post', () =>
                 })
                 .then((post) =>
                 {
-                  expect(post.getPoints()).toBe(2);
+                  expect(post.getPoints()).toBe(3);
                   done();
                 });
               });
@@ -376,6 +410,52 @@ describe('Post', () =>
       });
 
       it('should return the correct negative number when upvotes < downvotes', (done) =>
+      {
+        Vote.create({
+          value: -1,
+          postId: this.post.id,
+          userId: this.users[0].id
+        })
+        .then((vote) =>
+        {
+          Vote.create({
+            value: -1,
+            postId: this.post.id,
+            userId: this.users[1].id
+          })
+          .then((vote) =>
+          {
+            Vote.create({
+              value: -1,
+              postId: this.post.id,
+              userId: this.users[2].id
+            })
+            .then((vote) =>
+            {
+              Post.findByPk(this.post.id, 
+              {
+                include: 
+                [{
+                  model: Vote,
+                  as: 'votes'
+                }]
+              })
+              .then((post) =>
+              {
+                expect(post.getPoints()).toBe(-2);
+                done();
+              });
+            });
+          });
+        })
+        .catch((err) =>
+        {
+          console.log(err);
+          done();
+        });
+      });
+
+      it('should return 0 when upvotes == downvotes', (done) =>
       {
         Vote.create({
           value: -1,
@@ -408,47 +488,9 @@ describe('Post', () =>
               })
               .then((post) =>
               {
-                expect(post.getPoints()).toBe(-1);
+                expect(post.getPoints()).toBe(0);
                 done();
               });
-            });
-          });
-        })
-        .catch((err) =>
-        {
-          console.log(err);
-          done();
-        });
-      });
-
-      it('should return 0 when upvotes == downvotes', (done) =>
-      {
-        Vote.create({
-          value: -1,
-          postId: this.post.id,
-          userId: this.users[0].id
-        })
-        .then((vote) =>
-        {
-          Vote.create({
-            value: 1,
-            postId: this.post.id,
-            userId: this.users[1].id
-          })
-          .then((vote) =>
-          {
-            Post.findByPk(this.post.id, 
-            {
-              include: 
-              [{
-                model: Vote,
-                as: 'votes'
-              }]
-            })
-            .then((post) =>
-            {
-              expect(post.getPoints()).toBe(0);
-              done();
             });
           });
         })
@@ -468,7 +510,7 @@ describe('Post', () =>
       Vote.create({
         value: 1,
         postId: this.post.id,
-        userId: this.user.id
+        userId: this.otherUser.id
       })
       .then((vote) =>
       {
@@ -482,7 +524,7 @@ describe('Post', () =>
         })
         .then((post) =>
         {
-          expect(post.hasUpvoteFor(this.user.id)).toBe(true);
+          expect(post.hasUpvoteFor(this.otherUser.id)).toBe(true);
           done();
         });
       })
@@ -505,12 +547,12 @@ describe('Post', () =>
       })
       .then((post) =>
       {
-        expect(post.hasUpvoteFor(this.user.id)).toBe(false);
+        expect(post.hasUpvoteFor(this.otherUser.id)).toBe(false);
 
         Vote.create({
           value: -1,
           postId: this.post.id,
-          userId: this.user.id
+          userId: this.otherUser.id
         })
         .then((vote) =>
         {
@@ -524,7 +566,7 @@ describe('Post', () =>
           })
           .then((post) =>
           {
-            expect(post.hasUpvoteFor(this.user.id)).toBe(false);
+            expect(post.hasUpvoteFor(this.otherUser.id)).toBe(false);
             done();
           });
         })
@@ -549,7 +591,7 @@ describe('Post', () =>
       Vote.create({
         value: -1,
         postId: this.post.id,
-        userId: this.user.id
+        userId: this.otherUser.id
       })
       .then((vote) =>
       {
@@ -563,7 +605,7 @@ describe('Post', () =>
         })
         .then((post) =>
         {
-          expect(post.hasDownvoteFor(this.user.id)).toBe(true);
+          expect(post.hasDownvoteFor(this.otherUser.id)).toBe(true);
           done();
         });
       })
@@ -586,12 +628,12 @@ describe('Post', () =>
       })
       .then((post) =>
       {
-        expect(post.hasDownvoteFor(this.user.id)).toBe(false);
+        expect(post.hasDownvoteFor(this.otherUser.id)).toBe(false);
 
         Vote.create({
           value: 1,
           postId: this.post.id,
-          userId: this.user.id
+          userId: this.otherUser.id
         })
         .then((vote) =>
         {
@@ -605,7 +647,7 @@ describe('Post', () =>
           })
           .then((post) =>
           {
-            expect(post.hasDownvoteFor(this.user.id)).toBe(false);
+            expect(post.hasDownvoteFor(this.otherUser.id)).toBe(false);
             done();
           });
         })

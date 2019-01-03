@@ -14,6 +14,7 @@ describe('routes : votes', () =>
 {
   beforeEach((done) =>
   {
+    this.postUser;
     this.user;
     this.topic;
     this.post;
@@ -27,7 +28,7 @@ describe('routes : votes', () =>
       })
       .then((user) =>
       {
-        this.user = user;
+        this.postUser = user;
 
         Topic.create({
           title: 'Expeditions to Alpha Centauri',
@@ -36,7 +37,7 @@ describe('routes : votes', () =>
           [{
             title: 'My first visit to Proxima Centauri b',
             body: 'I saw some rocks.',
-            userId: this.user.id
+            userId: this.postUser.id
           }]
         }, 
         {
@@ -51,12 +52,20 @@ describe('routes : votes', () =>
           this.topic = topic;
           this.post = topic.posts[0];
 
-          done();
+          User.create({
+            email: 'voter@bloccit.com',
+            password: 'password'
+          })
+          .then((user) =>
+          {
+            this.user = user;
+            done();
+          });
         });
       })
       .catch((err) =>
       {
-        console.log(err);
+        expect(err).toBeNull();
         done();
       });
     });
@@ -104,7 +113,7 @@ describe('routes : votes', () =>
           })
           .catch((err) =>
           {
-            console.log(err);
+            expect(err).toBeNull();
             done();
           });
         });
@@ -158,7 +167,7 @@ describe('routes : votes', () =>
           })
           .catch((err) =>
           {
-            console.log(err);
+            expect(err).toBeNull();
             done();
           });
         });
@@ -214,14 +223,14 @@ describe('routes : votes', () =>
               })
               .catch((err) =>
               {
-                console.log(err);
+                expect(err).toBeNull();
                 done();
               });
             });
           })
           .catch((err) =>
           {
-            console.log(err);
+            expect(err).toBeNull();
             done();
           });
         });
@@ -257,7 +266,7 @@ describe('routes : votes', () =>
           })
           .catch((err) =>
           {
-            console.log(err);
+            expect(err).toBeNull();
             done();
           });
         });

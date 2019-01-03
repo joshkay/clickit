@@ -10,6 +10,7 @@ describe('Vote', () =>
 {
   beforeEach((done) => 
   {
+    this.postUser;
     this.user;
     this.topic;
     this.post;
@@ -23,7 +24,7 @@ describe('Vote', () =>
       })
       .then((user) =>
       {
-        this.user = user;
+        this.postUser = user;
 
         Topic.create({
           title: 'Expeditions to Alpha Centauri',
@@ -32,7 +33,7 @@ describe('Vote', () =>
           [{
             title: 'My first visit to Proxima Centauri b',
             body: 'I saw some rocks.',
-            userId: this.user.id
+            userId: this.postUser.id
           }]
         }, 
         {
@@ -49,13 +50,22 @@ describe('Vote', () =>
 
           Comment.create({
             body: 'ay caramba!!!!!',
-            userId: this.user.id,
+            userId: this.postUser.id,
             postId: this.post.id
           })
           .then((comment) =>
           {
             this.comment = comment;
-            done();
+            
+            User.create({
+              email: 'voter@bloccit.com',
+              password: 'password'
+            })
+            .then((user) =>
+            {
+              this.user = user;
+              done();
+            });
           });
         });
       })
@@ -85,7 +95,7 @@ describe('Vote', () =>
       })
       .catch((err) =>
       {
-        console.log(err);
+        expect(err).toBeNull();
         done();
       });
     });
@@ -106,7 +116,7 @@ describe('Vote', () =>
       })
       .catch((err) =>
       {
-        console.log(err);
+        expect(err).toBeNull();
         done();
       });
     });
@@ -178,7 +188,7 @@ describe('Vote', () =>
       })
       .catch((err) =>
       {
-        console.log(err);
+        expect(err).toBeNull();
         done();
       });
     });
@@ -214,7 +224,7 @@ describe('Vote', () =>
       })
       .catch((err) =>
       {
-        console.log(error);
+        expect(err).toBeNull();
         done();
       })
     });
@@ -240,7 +250,7 @@ describe('Vote', () =>
       })
       .catch((err) =>
       {
-        console.log(err);
+        expect(err).toBeNull();
         done();
       });
     });
@@ -263,7 +273,7 @@ describe('Vote', () =>
           title: 'Dress code on Proxima b',
           body: 'Spacesuit, space helmet, space boots, and space gloves',
           topicId: this.topic.id,
-          userId: this.user.id
+          userId: this.postUser.id
         })
         .then((newPost) =>
         {
@@ -279,7 +289,7 @@ describe('Vote', () =>
       })
       .catch((err) =>
       {
-        console.log(err);
+        expect(err).toBeNull();
         done();
       });
     });
@@ -306,7 +316,7 @@ describe('Vote', () =>
       })
       .catch((err) =>
       {
-        console.log(err);
+        expect(err).toBeNull();
         done();
       });
     });
