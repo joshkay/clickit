@@ -10,6 +10,7 @@ module.exports =
     const flairRoutes = require('../routes/flairs');
     const commentRoutes = require('../routes/comments');
     const voteRoutes = require('../routes/votes');
+    const favoriteRoutes = require('../routes/favorites');
 
     if (process.env.NODE_ENV === 'test')
     {
@@ -25,5 +26,6 @@ module.exports =
     app.use(flairRoutes);
     app.use(commentRoutes);
     app.use(voteRoutes);
+    app.use(favoriteRoutes);
   }
 }
