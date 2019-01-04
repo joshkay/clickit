@@ -19,8 +19,7 @@ describe('routes : post', () =>
     {
       User.create({
         email: 'starman@tesla.com',
-        password: 'Trekkie4lyfe',
-        role: 'member'
+        password: 'Trekkie4lyfe'
       })
       .then((user) =>
       {
