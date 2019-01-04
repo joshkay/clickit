@@ -40,7 +40,7 @@ module.exports =
   {
     let result = {};
 
-    User.findByPk(id)
+    User.scope({method: ['favoritedPosts', id]}).findOne()
     .then((user) =>
     {
       if (!user) 
@@ -49,7 +49,14 @@ module.exports =
       }
       else
       {
+        const favoritedPosts = user.favorites.map((favorite) =>
+        {
+          return favorite.Post;
+        });
+        user.favorites = null;
+
         result['user'] = user;
+        result['favoritedPosts'] = favoritedPosts;
 
         Post.scope({method: ['lastFiveFor', id]}).findAll()
         .then((posts) =>
@@ -60,6 +67,7 @@ module.exports =
           .then((comments) =>
           {
             result['comments'] = comments;
+
             callback(null, result);
           });
         })

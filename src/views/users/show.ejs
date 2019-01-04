@@ -15,37 +15,64 @@
 
       <hr>
 
-      <h2>Latest Posts</h2>
+      <% if (posts && posts.length > 0) { %>
+        <h2>Latest Posts</h2>
 
-      <ul class="list-unstyled">
-        <% if (posts) { %>
-          <% posts.forEach((post) => { %>
-            <li>
-              <a href="/topics/<%= post.topicId %>/posts/<%= post.id %>">
-                <%= post.title %>
-              </a>
-            </li>
-          <% }) %>
-        <% } %>
-      </ul>
-      <hr>
+        <ul class="list-unstyled">
+        
+        <% posts.forEach((post) => { %>
+          <li>
+            <a href="/topics/<%= post.topicId %>/posts/<%= post.id %>">
+              <%= post.title %>
+            </a>
+          </li>
+        <% }) %>
 
-      <h2>Latest Comments</h2>
+        </ul>
 
-      <ul class="list-unstyled">
-        <% if (comments) { %>
-          <% comments.forEach((comment) => { %>
-            <li>
-              <span>Post: </span>
-              <a href="/topics/<%= comment.Post.topicId %>/posts/<%= comment.Post.id %>">
-                <%= comment.Post.title %>
-              </a>
-              <p>Comment: <%= comment.body %></p>
-            </li>
+        <hr>
+      <% } %>
+
+      
+      <% if (comments && comments.length > 0) { %>
+        <h2>Latest Comments</h2>
+
+        <ul class="list-unstyled">
+
+        <% comments.forEach((comment, index) => { %>
+          <li>
+            <span>Post: </span>
+            <a href="/topics/<%= comment.Post.topicId %>/posts/<%= comment.Post.id %>">
+              <%= comment.Post.title %>
+            </a>
+            <p>Comment: <%= comment.body %></p>
+          </li>
+
+          <% if (index < comments.length - 1) { %>
             <hr>
-          <% }) %>
-        <% } %>
-      </ul>
+          <% } %>
+        <% }) %>
+        
+        </ul>
+      
+        <hr>
+      <% } %>
+
+      <% if (favoritedPosts && favoritedPosts.length > 0) { %>
+        <h2>Favorited Posts</h2>
+
+        <ul class="list-unstyled">
+
+        <% favoritedPosts.forEach((post) => { %>
+          <li>
+            <a href="/topics/<%= post.topicId %>/posts/<%= post.id %>">
+              <%= post.title %>
+            </a>
+          </li>
+        <% }) %>
+
+        </ul>
+      <% } %>
     </main>
 
     <% include ../static/partials/baseScripts.ejs %>
